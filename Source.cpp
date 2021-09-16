@@ -5,18 +5,17 @@
 
 using namespace std;
 
-vector<unsigned> values, values_sort, val1, val2, val3;
-int n = 20, size123;	// Длина вектора
+vector<unsigned> values, val1, val2, val3;
 unsigned min_val=0;
 
-vector<unsigned>::iterator it1, it2, it3, itv;
+vector<unsigned>::iterator it1, it2, it3;
 
 int i;					// Счётчик
 int k;
 
-void print_values() {
+void print_values() {				// Вывод значений векторов
 
-	for (i = 0; i < val1.size() || i < val2.size() || i < val3.size(); i++) {      // Вывод значений векторов
+	for (i = 0; i < val1.size() || i < val2.size() || i < val3.size(); i++) {      
 		if (i < val1.size()) cout << val1[i]; cout << "\t";
 		if (i < val2.size()) cout << val2[i]; cout << "\t";
 		if (i < val3.size()) cout << val3[i]; cout << "\t" << endl;
@@ -33,15 +32,7 @@ void curr_out() {
 
 bool moving_it() {
 	
-	//cout << "Moving is called\n";
-	//curr_out();
-
 	bool te=true;
-
-	/*if (*it1 != values.back() && *it2 != values.back() && *it3 != values.back()) {
-		cout << "\nreturn true\n";		
-		return true;
-	}*/
 
 	if (it1 < val1.end()) if (*it1 == values.back()) {
 		++it1;
@@ -55,13 +46,13 @@ bool moving_it() {
 		++it3;
 		te = false;
 	}
-	//cout << "\nreturn true\n";
+
 	return te;
 	
 }
 
 unsigned add_min() {
-
+	
 	if (it1 < val1.end()) min_val = *it1;
 	else
 		if (it2 < val2.end()) min_val = *it2;
@@ -75,7 +66,7 @@ unsigned add_min() {
 	if (it1 < val1.end()) if (min_val == *it1) ++it1;
 	if (it2 < val2.end()) if (min_val == *it2) ++it2;
 	if (it3 < val3.end()) if (min_val == *it3) ++it3;
-	
+
 	return min_val;
 }
 
@@ -86,7 +77,6 @@ int main() {
 	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val1.push_back(rand() % 100);
 	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val2.push_back(rand() % 100);
 	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val3.push_back(rand() % 100);
-
 
 	print_values();
 	
@@ -104,63 +94,13 @@ int main() {
 	
 	values.reserve(val1.size()+val2.size()+val3.size());
 	
-	//itv = values.begin();
-	
-	min_val = 100;
-
-
-	if (*it1 <= min_val) {
-		min_val = *it1;
-	}
-
-	if (*it2 <= min_val) {
-		min_val = *it2;
-	}
-
-	if (*it3 <= min_val) {
-		min_val = *it3;
-	}
-
-	values.push_back(min_val);
-
-
-/*	for (i = 0; i < val1.size() || i < val2.size() || i < val3.size(); i++)*/ 
 	while (it1 < val1.end() || it2 < val2.end() || it3 < val3.end()) {
 
-		//if (it1 < val1.end()) {
-		//	if (*it1 == values.back()) {
-		//		it1++;
-		//	}
-		//	cout << *it1 << " ";
-		//}
-		//if (it2 < val2.end()) {
-		//	if (*it2 == values.back()) {
-		//		it2++;
-		//	}
-		//	cout << *it2 << " ";
-		//}
-		//if (it3 < val3.end()) {
-		//	if (*it3 == values.back()) {
-		//		it3++;
-		//	}
-		//	cout << *it3 << " ";
-		//}
-
-
-		//curr_out();
-		while (!moving_it());
 		
 		values.push_back(add_min());
 
-		//cout << "Added " << values.back() << endl;
-
-		if (it1 >= val1.end() || it2 >= val2.end() || it3 >= val3.end()) {
-
-			cout << "\nOVER\n";
-
-		}
-
-
+		while (!moving_it());
+		
 	}
 
 
