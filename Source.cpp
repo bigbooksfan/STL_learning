@@ -23,6 +23,62 @@ void print_values() {
 	}
 }
 
+void curr_out() {
+	cout << values.back() << " ";
+	if (it1 < val1.end()) cout << *it1 << " ";
+	if (it2 < val2.end()) cout << *it2 << " ";
+	if (it3 < val3.end()) cout << *it3 << " ";
+	cout << endl;
+}
+
+bool moving_it() {
+	
+	//cout << "Moving is called\n";
+	//curr_out();
+
+	bool te=true;
+
+	/*if (*it1 != values.back() && *it2 != values.back() && *it3 != values.back()) {
+		cout << "\nreturn true\n";		
+		return true;
+	}*/
+
+	if (it1 < val1.end()) if (*it1 == values.back()) {
+		++it1;
+		te = false;
+	}
+	if (it2 < val2.end()) if (*it2 == values.back()) {
+		++it2;
+		te = false;
+	}
+	if (it3 < val3.end()) if (*it3 == values.back()) {
+		++it3;
+		te = false;
+	}
+	//cout << "\nreturn true\n";
+	return te;
+	
+}
+
+unsigned add_min() {
+
+	if (it1 < val1.end()) min_val = *it1;
+	else
+		if (it2 < val2.end()) min_val = *it2;
+		else
+			if (it3 < val3.end()) min_val = *it3;
+
+
+	if (it2 < val2.end()) if (*it2 < min_val) min_val = *it2;
+	if (it3 < val3.end()) if (*it3 < min_val) min_val = *it3;
+
+	if (it1 < val1.end()) if (min_val == *it1) ++it1;
+	if (it2 < val2.end()) if (min_val == *it2) ++it2;
+	if (it3 < val3.end()) if (min_val == *it3) ++it3;
+	
+	return min_val;
+}
+
 int main() {
 
 	srand(time(0));
@@ -69,28 +125,42 @@ int main() {
 
 
 /*	for (i = 0; i < val1.size() || i < val2.size() || i < val3.size(); i++)*/ 
-	while (it1 <= val1.end() || it2 <= val2.end() || it3 <= val3.end()) {
+	while (it1 < val1.end() || it2 < val2.end() || it3 < val3.end()) {
 
-		min_val = 100;
+		//if (it1 < val1.end()) {
+		//	if (*it1 == values.back()) {
+		//		it1++;
+		//	}
+		//	cout << *it1 << " ";
+		//}
+		//if (it2 < val2.end()) {
+		//	if (*it2 == values.back()) {
+		//		it2++;
+		//	}
+		//	cout << *it2 << " ";
+		//}
+		//if (it3 < val3.end()) {
+		//	if (*it3 == values.back()) {
+		//		it3++;
+		//	}
+		//	cout << *it3 << " ";
+		//}
 
-		if (it1 <= val1.end()) while (*it1 == values.back()) it1++; cout << *it1 << " ";
-		if (it2 <= val2.end()) while (*it2 == values.back()) it2++; cout << *it2 << " ";
-		if (it3 <= val3.end()) while (*it3 == values.back()) it3++; cout << *it3 << " ";
 
-		cout << endl;
+		//curr_out();
+		while (!moving_it());
+		
+		values.push_back(add_min());
+
+		//cout << "Added " << values.back() << endl;
+
+		if (it1 >= val1.end() || it2 >= val2.end() || it3 >= val3.end()) {
+
+			cout << "\nOVER\n";
+
+		}
 
 
-
-		if (it1 < val1.end()) if (*it1 < min_val) min_val = *it1;
-		if (it2 < val2.end()) if (*it2 < min_val) min_val = *it2;
-		if (it3 < val3.end()) if (*it3 < min_val) min_val = *it3;
-
-		//if (*it1 < min_val && it1 < val1.end()) min_val = *it1;
-//		if (*it2 < min_val && it2 < val2.end()) min_val = *it2;
-//		if (*it3 < min_val && it3 < val3.end()) min_val = *it3;
-
-		values.push_back(min_val);
-		cout << "Added " << values.back() << endl;
 	}
 
 
