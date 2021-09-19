@@ -2,70 +2,60 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
-vector<unsigned> values, val1, val2, val3;
-unsigned min_val=0;
+vector<unsigned> values;				// Assembled values
+vector<vector<unsigned>> valN;			// External values placeholder
+unsigned min_val=100, maxL;
 
-vector<unsigned>::iterator it1, it2, it3;
+unsigned N;				// Number of arrays
 
-int i;					// Счётчик
-int k;
+vector<bool> eov;			// End of vector flags. TRUE - keep going, FALSE - reached the end
+bool end_v = false;			// Overall flag. FALSE - at least one vector is in work. TRUE - all vectors out
 
-void print_values() {				// Вывод значений векторов
+bool te;				// Current values comparing with last added value. If TRUE - all values are not same with last added
 
-	for (i = 0; i < val1.size() || i < val2.size() || i < val3.size(); i++) {      
-		if (i < val1.size()) cout << val1[i]; cout << "\t";
-		if (i < val2.size()) cout << val2[i]; cout << "\t";
-		if (i < val3.size()) cout << val3[i]; cout << "\t" << endl;
+vector<vector<unsigned>::iterator> itN;			// vector of iterators for running on income vectors
+
+int i, k, n;					// Counters
+
+void print_values() {				// vectors print
+
+	for (i = 0; i < maxL; ++i) {
+		for (n = 0; n < N; ++n) {
+			if (i < valN[n].size()) cout << setw(4) << valN[n][i];
+			else cout << setw(4) << " ";
+		}
+		cout << endl;
 	}
 }
 
-void curr_out() {
-	cout << values.back() << " ";
-	if (it1 < val1.end()) cout << *it1 << " ";
-	if (it2 < val2.end()) cout << *it2 << " ";
-	if (it3 < val3.end()) cout << *it3 << " ";
-	cout << endl;
-}
-
-bool moving_it() {
+bool moving_it() {					// moving iterators with same value with last added in assembled vector
 	
-	bool te=true;
+	te=true;						// true - no same values, false - at least one value is same. Need to check iterators again and move necessaries
 
-	if (it1 < val1.end()) if (*it1 == values.back()) {
-		++it1;
+	for (n = 0; n < N; ++n) if (eov[n]) if (*itN[n] == values.back()) {			// every current value checking with ==
+		++itN[n];
 		te = false;
 	}
-	if (it2 < val2.end()) if (*it2 == values.back()) {
-		++it2;
-		te = false;
-	}
-	if (it3 < val3.end()) if (*it3 == values.back()) {
-		++it3;
-		te = false;
-	}
+
+	for (n = 0; n < N; ++n) if (itN[n] >= valN[n].end()) eov[n] = false;					// End of vectors flag checking
 
 	return te;
 	
 }
 
 unsigned add_min() {
+
+	min_val = 100;
+
+	for (n = 0; n < N; ++n) if (eov[n]) if (*itN[n] < min_val) min_val = *itN[n];				// finding minimum value of all current iterators
+
+	for (n = 0; n < N; ++n) if (eov[n]) if (min_val == *itN[n]) ++itN[n];  // Moving iterators with current minimum value
 	
-	if (it1 < val1.end()) min_val = *it1;
-	else
-		if (it2 < val2.end()) min_val = *it2;
-		else
-			if (it3 < val3.end()) min_val = *it3;
-
-
-	if (it2 < val2.end()) if (*it2 < min_val) min_val = *it2;
-	if (it3 < val3.end()) if (*it3 < min_val) min_val = *it3;
-
-	if (it1 < val1.end()) if (min_val == *it1) ++it1;
-	if (it2 < val2.end()) if (min_val == *it2) ++it2;
-	if (it3 < val3.end()) if (min_val == *it3) ++it3;
+	for (n = 0; n < N; ++n) if (itN[n] >= valN[n].end()) eov[n] = false;					// End of vectors flag checking
 
 	return min_val;
 }
@@ -74,41 +64,45 @@ int main() {
 
 	srand(time(0));
 	
-	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val1.push_back(rand() % 100);
-	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val2.push_back(rand() % 100);
-	k = rand() % 15 + 5;	for (i = 0; i < k; i++) val3.push_back(rand() % 100);
+	N = rand() % 15 + 5;			// number of vectors is set
+	eov.resize(N);
+	for (n = 0; n < N; ++n) eov[n] = true;		// flags preparing
+
+	valN.resize(N);					// vector of vectors
+	itN.resize(N);					// vector of iterators
+
+
+	for (n = 0; n < N; ++n) {		// filling vectors with numbers 0-100
+		k = rand() % 15 + 5; for (i = 0; i < k; i++) valN[n].push_back(rand() % 100);
+	}
+	
+	for (n = 0; n < N; ++n) if (maxL < valN[n].size()) maxL = valN[n].size();		// taking maximum income vector lenght
 
 	print_values();
 	
 	cout << "\n\n";
 
-	sort(val1.begin(), val1.end());
-	sort(val2.begin(), val2.end());
-	sort(val3.begin(), val3.end());
+	for (n = 0; n < N; ++n) sort(valN[n].begin(), valN[n].end());			// sort vectors
 
 	print_values();
 
-	it1 = val1.begin();
-	it2 = val2.begin();
-	it3 = val3.begin();
+	for (n = 0; n < N; ++n) itN[n] = valN[n].begin();						// iterators initialization
 	
-	values.reserve(val1.size()+val2.size()+val3.size());
+	values.reserve(20 * N);													// Memory reserve
 	
-	while (it1 < val1.end() || it2 < val2.end() || it3 < val3.end()) {
+	while (!end_v) {						// THE CYCLE
+				
+		values.push_back(add_min());		// put current minimum value in assemble
 
-		
-		values.push_back(add_min());
+		while (!moving_it());				// checking same values
 
-		while (!moving_it());
+		end_v = true; for (n = 0; n < N; ++n) end_v *= !eov[n];   // end_v becomes TRUE when all eov[n] is false. Out of cycle
 		
 	}
 
+	values.shrink_to_fit();					// memory release
 
-	for (i = 0; i < values.size(); i++) {
-		cout << values[i] << " ";
-	}
-
-
-
-	//cout << clock();
+	for (i = 0; i < values.size(); i++) cout << values[i] << " ";
+	
+	cout << endl << endl << clock();
 }
